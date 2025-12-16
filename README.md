@@ -8,9 +8,24 @@ Una Progressive Web App (PWA) del clásico juego de Solitario Klondike, desarrol
 
 ## 🎮 Demo en Vivo
 
-**🌐 Aplicación:** https://culinary-1613e.web.app
+**🌐 Aplicación:** https://solitario-wely.web.app
 
 **🔗 API:** https://us-central1-culinary-1613e.cloudfunctions.net/api
+
+### 📲 Instalar como App (PWA)
+
+1. Visita **https://solitario-wely.web.app** en tu navegador
+2. En el navegador verás un botón de "Instalar" o un ícono de instalación en la barra de direcciones
+3. Haz clic en **"Instalar"** o **"Agregar a pantalla de inicio"**
+4. ¡Listo! La app estará disponible como aplicación nativa en tu dispositivo
+
+**En móviles:**
+- **Android Chrome**: Menú → "Agregar a pantalla de inicio"
+- **iOS Safari**: Botón compartir → "Agregar a pantalla de inicio"
+
+**En escritorio:**
+- **Chrome/Edge**: Ícono de instalación en la barra de direcciones (derecha)
+- **Opera**: Botón "Instalar Solitario Klondike" en la barra de direcciones
 
 ## 🎯 Características
 
