@@ -3,7 +3,6 @@
  * Wrapper para el backend existente adaptado a Firebase Functions
  */
 
-import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import express from 'express';
 import cors from 'cors';
@@ -89,7 +88,7 @@ const gameController = new GameController(
 
 // Rutas
 const gameRoutes = createGameRoutes(gameController);
-app.use('/api', gameRoutes);
+app.use('/', gameRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -99,6 +98,12 @@ app.use((req, res) => {
   });
 });
 
-// Exportar como Firebase Function
+// Exportar como Firebase Function (v2)
 // La ruta será: https://us-central1-<project-id>.cloudfunctions.net/api
-export const api = functions.https.onRequest(app);
+import {onRequest} from 'firebase-functions/v2/https';
+export const api = onRequest({
+  region: 'us-central1',
+  maxInstances: 10,
+  timeoutSeconds: 60,
+  memory: '256MiB'
+}, app);
