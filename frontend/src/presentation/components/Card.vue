@@ -242,21 +242,21 @@ function handleClick() {
   }
 }
 
-/* Dispositivos muy pequeños (300-320px) */
-@media (max-width: 320px) {
+/* Dispositivos muy pequeños (desde 250px) */
+@media (max-width: 250px) {
   .card {
-    width: 38px;
-    height: 53px;
+    width: 32px;
+    height: 45px;
     border-radius: 3px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   }
 
   .corner-rank {
-    font-size: 9px;
+    font-size: 7px;
   }
 
   .corner-suit {
-    font-size: 8px;
+    font-size: 6px;
   }
 
   .card-center {

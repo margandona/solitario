@@ -196,20 +196,20 @@ function handleCardDrop(data: { fromPileId: string; toPileId: string; cardCount:
   }
 }
 
-/* Dispositivos muy pequeños (300-320px) */
-@media (max-width: 320px) {
+/* Dispositivos muy pequeños (desde 250px) */
+@media (max-width: 250px) {
   .game-board {
-    padding: 2px;
-    gap: 8px;
+    padding: 1px;
+    gap: 4px;
   }
 
   .top-area {
-    gap: 6px;
+    gap: 3px;
   }
 
   .left-section,
   .foundations {
-    gap: 3px;
+    gap: 2px;
   }
 
   .tableau-area {

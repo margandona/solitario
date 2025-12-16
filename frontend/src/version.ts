@@ -45,7 +45,7 @@ export const CHANGELOG = [
       'Persistencia con Firebase Firestore',
       'Actualización optimista en tiempo real',
       'Diseño responsive para móviles',
-      'Soporte desde Galaxy Fold 4',
+      'Soporte desde 250px de ancho',
       'PWA instalable en móvil y escritorio',
       'Orientación adaptable (vertical/horizontal)',
       'Mensajes dulces para la abuelita',

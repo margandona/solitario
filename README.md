@@ -30,7 +30,7 @@ Una Progressive Web App (PWA) del clásico juego de Solitario Klondike, desarrol
 ## 🎯 Características
 
 - 🎴 **Juego completo de Solitario Klondike** con todas las reglas clásicas
-- 📱 **Responsive Design** - Desde 300px (Galaxy Fold 4) hasta 4K
+- 📱 **Responsive Design** - Desde 250px de ancho hasta 4K
 - 🎴 **Cartas estilo Poker** - Con esquinas visibles para mejor jugabilidad
 - 🔊 **Sistema de Sonidos** - 6 tipos de sonidos procedurales con Web Audio API
 - ✋ **Validación de Movimientos** - Previene jugadas inválidas con retroalimentación

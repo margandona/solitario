@@ -328,18 +328,18 @@ function getSuitSymbol(suit?: string): string {
   }
 }
 
-/* Dispositivos muy pequeños (300-320px) */
-@media (max-width: 320px) {
+/* Dispositivos muy pequeños (desde 250px) */
+@media (max-width: 250px) {
   .pile {
-    min-width: 38px;
-    min-height: 53px;
+    min-width: 32px;
+    min-height: 45px;
   }
 
   .pile-foundation,
   .pile-waste,
   .pile-stock {
-    min-height: 53px;
-    min-width: 38px;
+    min-height: 45px;
+    min-width: 32px;
   }
 
   .pile-tableau {
