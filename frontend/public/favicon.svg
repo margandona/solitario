@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#2E7D32" rx="4"/>
+  <rect x="6" y="6" width="20" height="20" fill="white" rx="2" stroke="#333" stroke-width="0.5"/>
+  
+  <!-- Símbolo de corazón -->
+  <path d="M 16 10 C 16 10, 13 7, 11 9 C 9 11, 10 14, 16 18 C 22 14, 23 11, 21 9 C 19 7, 16 10, 16 10 Z" fill="#d32f2f"/>
+</svg>

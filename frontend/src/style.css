@@ -1,0 +1,113 @@
+/* Estilos globales adicionales */
+
+:root {
+  --primary-color: #2E7D32;
+  --primary-light: #4caf50;
+  --primary-dark: #1B5E20;
+  --secondary-color: #FF6F00;
+  --background: #e8f5e9;
+  --card-bg: #ffffff;
+  --text-primary: #212121;
+  --text-secondary: #666;
+  --border-color: #ccc;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+body {
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+/* Utilidades */
+.text-center {
+  text-align: center;
+}
+
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+.mt-4 { margin-top: 32px; }
+
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+.mb-4 { margin-bottom: 32px; }
+
+.p-1 { padding: 8px; }
+.p-2 { padding: 16px; }
+.p-3 { padding: 24px; }
+.p-4 { padding: 32px; }
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(46, 125, 50, 0.3);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(46, 125, 50, 0.5);
+}
+/* Responsive - Orientación Landscape en móviles */
+@media (max-width: 768px) and (orientation: landscape) {
+  body {
+    overflow-x: hidden;
+  }
+  
+  #app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Prevenir zoom no deseado en iOS */
+input,
+select,
+textarea {
+  font-size: 16px !important;
+}
+
+/* Safe areas para notch en móviles */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+/* Ajustes para pantallas muy pequeñas (300-320px) */
+@media (max-width: 320px) {
+  body {
+    padding: 0;
+    margin: 0;
+  }
+  
+  #app {
+    padding: 0;
+  }
+}
+
+/* Optimizaciones táctiles */
+button,
+.card,
+.pile {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  -webkit-touch-callout: none;
+}
+
+/* Ocultar elementos de sistema en PWA */
+@media (display-mode: standalone) {
+  /* Estilos específicos cuando se ejecuta como PWA */
+  body {
+    overscroll-behavior-y: contain;
+  }
+}

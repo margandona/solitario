@@ -1,0 +1,5 @@
+<!-- Placeholder icon - reemplazar con iconos reales -->
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" fill="#2E7D32"/>
+  <text x="256" y="300" font-size="200" text-anchor="middle" fill="white">🃏</text>
+</svg>
