@@ -1,14 +1,29 @@
-# 🃏 Solitario Klondike para la Abuelita
+# 🃏 Solitario Klondike PWA
 
-Una Progressive Web App (PWA) de Solitario Klondike creada con Vue 3 y Node.js siguiendo Clean Architecture y principios SOLID.
+Una Progressive Web App (PWA) del clásico juego de Solitario Klondike, desarrollada con Vue 3 y desplegada en Firebase.
+
+![Version](https://img.shields.io/badge/version-1.1.0-blue)
+![Firebase](https://img.shields.io/badge/Firebase-Deployed-orange)
+![Vue.js](https://img.shields.io/badge/Vue.js-3.3-green)
+
+## 🎮 Demo en Vivo
+
+**🌐 Aplicación:** https://culinary-1613e.web.app
+
+**🔗 API:** https://us-central1-culinary-1613e.cloudfunctions.net/api
 
 ## 🎯 Características
 
-- 🎴 Juego completo de Solitario Klondike
-- 💝 Mensajes lindos y motivadores para tu abuelita
-- 📱 PWA instalable y jugable sin conexión
-- ♿ Diseño accesible con texto grande y alto contraste
-- 🏗️ Arquitectura limpia y código mantenible
+- 🎴 **Juego completo de Solitario Klondike** con todas las reglas clásicas
+- 📱 **Responsive Design** - Desde 300px (Galaxy Fold 4) hasta 4K
+- 🎴 **Cartas estilo Poker** - Con esquinas visibles para mejor jugabilidad
+- 🔊 **Sistema de Sonidos** - 6 tipos de sonidos procedurales con Web Audio API
+- ✋ **Validación de Movimientos** - Previene jugadas inválidas con retroalimentación
+- 💾 **Persistencia en Firebase Firestore**
+- ⚡ **Actualización Optimista** - Respuesta instantánea en la UI
+- 🤖 **Auto-Completar** - Botón para terminar el juego automáticamente
+- 🔄 **PWA** - Instálala como app nativa, funciona offline
+- 🏗️ **Clean Architecture** con principios SOLID
 
 ## 📋 Plan de Desarrollo por Fases
 
