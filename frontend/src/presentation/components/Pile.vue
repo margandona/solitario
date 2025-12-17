@@ -1,5 +1,6 @@
 <template>
   <div 
+    ref="pileElement"
     class="pile" 
     :class="pileClasses"
     @click="handlePileClick"
@@ -26,6 +27,10 @@
       :draggable="canDragCard(card, index)"
       @dragstart="handleDragStart(card, index, $event)"
       @click.stop="handleCardClick(card, index)"
+      @touchstart="handleTouchStart(card, index, $event)"
+      @touchmove.prevent="handleTouchMove($event)"
+      @touchend="handleTouchEnd($event)"
+      @touchcancel="handleTouchCancel"
     >
       <Card 
         :card="card" 
@@ -37,10 +42,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import Card from './Card.vue';
 import type { Pile as PileType, Card as CardType } from '../../domain/types';
 import { canMoveCardsToPile } from '../../utils/gameRules';
+import { touchDragManager } from '../../utils/touchDragDrop';
 
 interface Props {
   pile: PileType;
@@ -60,9 +66,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>();
 
+const pileElement = ref<HTMLElement | null>(null);
 const isDragOver = ref(false);
 const isValidDrop = ref(false);
 const dragData = ref<{ pileId: string; cardIndex: number; cardCount: number; cards?: CardType[] } | null>(null);
+const touchStartTime = ref(0);
+const isTouchDragging = ref(false);
 
 const displayCards = computed(() => {
   // Para STOCK y WASTE, mostrar solo la carta superior
@@ -232,20 +241,117 @@ function getSuitSymbol(suit?: string): string {
   };
   return symbols[suit] || '';
 }
+
+// Touch event handlers
+function handleTouchStart(card: CardType, index: number, event: TouchEvent) {
+  if (!canDragCard(card, index)) return;
+  
+  touchStartTime.value = Date.now();
+  const touch = event.touches[0];
+  
+  // Calcular cuántas cartas se van a mover
+  const cardCount = props.pile.cards.length - index;
+  const cardsToMove = props.pile.cards.slice(index);
+  
+  dragData.value = {
+    pileId: props.pile.id,
+    cardIndex: index,
+    cardCount: cardCount,
+    cards: cardsToMove
+  };
+  
+  // Iniciar drag con el manager
+  const target = event.currentTarget as HTMLElement;
+  touchDragManager.startDrag({
+    pileId: props.pile.id,
+    cardIndex: index,
+    cardCount: cardCount,
+    startX: touch.clientX,
+    startY: touch.clientY
+  }, target);
+  
+  isTouchDragging.value = true;
+}
+
+function handleTouchMove(event: TouchEvent) {
+  if (!isTouchDragging.value || !touchDragManager.isDragging()) return;
+  
+  const touch = event.touches[0];
+  touchDragManager.updateGhostPosition(touch.clientX, touch.clientY);
+  
+  // Detectar sobre qué pila estamos
+  const targetPileId = touchDragManager.findDropTarget(touch.clientX, touch.clientY);
+  
+  if (targetPileId && targetPileId !== props.pile.id) {
+    isDragOver.value = true;
+  } else if (isDragOver.value) {
+    isDragOver.value = false;
+  }
+}
+
+function handleTouchEnd(event: TouchEvent) {
+  if (!isTouchDragging.value) return;
+  
+  const touch = event.changedTouches[0];
+  const targetPileId = touchDragManager.findDropTarget(touch.clientX, touch.clientY);
+  const dragInfo = touchDragManager.endDrag();
+  
+  isTouchDragging.value = false;
+  isDragOver.value = false;
+  
+  // Si hay un target válido y no es la misma pila
+  if (targetPileId && dragInfo.data && targetPileId !== dragInfo.data.pileId) {
+    emit('cardDrop', {
+      fromPileId: dragInfo.data.pileId,
+      toPileId: targetPileId,
+      cardCount: dragInfo.data.cardCount
+    });
+  }
+  
+  dragData.value = null;
+}
+
+function handleTouchCancel() {
+  touchDragManager.cancelDrag();
+  isTouchDragging.value = false;
+  isDragOver.value = false;
+  dragData.value = null;
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  if (pileElement.value) {
+    touchDragManager.registerDropTarget(props.pile.id, pileElement.value);
+  }
+});
+
+onUnmounted(() => {
+  touchDragManager.unregisterDropTarget(props.pile.id);
+});
 </script>
 
 <style scoped>
 .pile {
-  min-height: 112px;
-  min-width: 80px;
+  min-height: clamp(45px, 16.8vw, 112px);
+  min-width: clamp(32px, 12vw, 80px);
   border: 2px dashed #ccc;
-  border-radius: 8px;
+  border-radius: clamp(2px, 0.8vw, 8px);
   position: relative;
   transition: all 0.2s ease;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .pile-tableau {
-  min-height: 450px;
+  min-height: clamp(200px, 60vw, 450px);
+}
+
+@media (max-width: 600px) {
+  .pile {
+    min-width: calc(45px + 3vw);
+    min-height: calc(63px + 4.2vw);
+  }
 }
 
 .pile-foundation,
@@ -293,6 +399,12 @@ function getSuitSymbol(suit?: string): string {
 
 .card-wrapper {
   position: relative;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card-wrapper:active {
+  cursor: grabbing;
 }
 
 /* Tablets */
@@ -328,11 +440,38 @@ function getSuitSymbol(suit?: string): string {
   }
 }
 
-/* Dispositivos muy pequeños (desde 250px) */
+/* Pantallas pequeñas (320px) */
+@media (max-width: 320px) {
+  .pile {
+    min-width: 36px;
+    min-height: 50px;
+    border-width: 1px;
+    border-radius: 3px;
+  }
+
+  .pile-foundation,
+  .pile-waste,
+  .pile-stock {
+    min-height: 50px;
+    min-width: 36px;
+  }
+
+  .pile-tableau {
+    min-height: 240px;
+  }
+
+  .placeholder-text {
+    font-size: 20px;
+  }
+}
+
+/* Dispositivos muy pequeños (250px) */
 @media (max-width: 250px) {
   .pile {
     min-width: 32px;
     min-height: 45px;
+    border-width: 1px;
+    border-radius: 2px;
   }
 
   .pile-foundation,
@@ -343,11 +482,12 @@ function getSuitSymbol(suit?: string): string {
   }
 
   .pile-tableau {
-    min-height: 230px;
+    min-height: 200px;
   }
 
   .placeholder-text {
-    font-size: 18px;
+    font-size: 16px;
+    line-height: 1;
   }
 }
 </style>

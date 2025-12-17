@@ -84,15 +84,42 @@ textarea {
   }
 }
 
-/* Ajustes para pantallas muy pequeñas (desde 250px) */
-@media (max-width: 250px) {
+/* Ajustes para pantallas pequeñas (320px) */
+@media (max-width: 320px) {
   body {
     padding: 0;
     margin: 0;
+    font-size: 14px;
   }
   
   #app {
     padding: 0;
+    min-width: 250px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+/* Ajustes para pantallas muy pequeñas (250px) */
+@media (max-width: 250px) {
+  body {
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+  }
+  
+  #app {
+    padding: 0;
+    min-width: 250px;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  * {
+    box-sizing: border-box;
   }
 }
 

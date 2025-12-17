@@ -109,33 +109,33 @@ function handleCardDrop(data: { fromPileId: string; toPileId: string; cardCount:
 
 <style scoped>
 .game-board {
-  padding: 24px;
-  min-height: calc(100vh - 100px);
+  padding: clamp(2px, 3vw, 20px);
+  min-height: calc(100vh - 150px);
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: clamp(4px, 3vw, 20px);
 }
 
 .top-area {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 16px;
+  gap: clamp(2px, 2.5vw, 16px);
 }
 
 .left-section {
   display: flex;
-  gap: 16px;
+  gap: clamp(2px, 2.5vw, 16px);
 }
 
 .foundations {
   display: flex;
-  gap: 16px;
+  gap: clamp(2px, 2.5vw, 16px);
 }
 
 .tableau-area {
   display: flex;
-  gap: 16px;
+  gap: clamp(2px, 2.5vw, 16px);
   justify-content: center;
   flex: 1;
 }
@@ -196,15 +196,44 @@ function handleCardDrop(data: { fromPileId: string; toPileId: string; cardCount:
   }
 }
 
-/* Dispositivos muy pequeños (desde 250px) */
-@media (max-width: 250px) {
+/* Pantallas pequeñas (320px) */
+@media (max-width: 320px) {
   .game-board {
-    padding: 1px;
-    gap: 4px;
+    padding: 2px;
+    gap: 5px;
   }
 
   .top-area {
+    gap: 4px;
+    flex-wrap: nowrap;
+  }
+
+  .left-section,
+  .foundations {
     gap: 3px;
+  }
+
+  .tableau-area {
+    gap: 3px;
+    padding-bottom: 6px;
+  }
+
+  .tableau-column {
+    min-width: 34px;
+  }
+}
+
+/* Dispositivos muy pequeños (250px) */
+@media (max-width: 250px) {
+  .game-board {
+    padding: 1px;
+    gap: 3px;
+    min-height: auto;
+  }
+
+  .top-area {
+    gap: 2px;
+    flex-wrap: nowrap;
   }
 
   .left-section,
@@ -214,6 +243,13 @@ function handleCardDrop(data: { fromPileId: string; toPileId: string; cardCount:
 
   .tableau-area {
     gap: 2px;
+    padding-bottom: 4px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tableau-column {
+    min-width: 32px;
   }
 }
 

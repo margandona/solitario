@@ -85,6 +85,14 @@ function handleClick() {
   touch-action: none;
 }
 
+/* Fluidez entre breakpoints */
+@media (max-width: 600px) {
+  .card {
+    width: calc(50px + 3vw);
+    height: calc(70px + 4.2vw);
+  }
+}
+
 .card.clickable:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -242,7 +250,59 @@ function handleClick() {
   }
 }
 
-/* Dispositivos muy pequeños (desde 250px) */
+/* Pantallas pequeñas (280-320px) */
+@media (max-width: 360px) and (min-width: 281px) {
+  .card {
+    width: calc(34px + 0.5vw);
+    height: calc(47px + 0.7vw);
+    border-radius: 3px;
+  }
+
+  .corner-rank {
+    font-size: clamp(7px, 2.5vw, 9px);
+  }
+
+  .corner-suit {
+    font-size: clamp(6px, 2.2vw, 8px);
+  }
+
+  .card-center {
+    font-size: clamp(16px, 6vw, 20px);
+  }
+}
+
+/* Pantallas pequeñas (320px) */
+@media (max-width: 280px) {
+  .card {
+    width: 34px;
+    height: 48px;
+    border-radius: 3px;
+  }
+
+  .corner-rank {
+    font-size: 7.5px;
+  }
+
+  .corner-suit {
+    font-size: 6.5px;
+  }
+
+  .card-center {
+    font-size: 17px;
+  }
+
+  .card-corner.top-left {
+    top: 1px;
+    left: 2px;
+  }
+
+  .card-corner.bottom-right {
+    bottom: 1px;
+    right: 2px;
+  }
+}
+
+/* Dispositivos muy pequeños (250px) */
 @media (max-width: 250px) {
   .card {
     width: 32px;

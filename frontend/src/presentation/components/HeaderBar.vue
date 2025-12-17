@@ -124,7 +124,7 @@ function handleToggleSound() {
 .header-bar {
   background: linear-gradient(135deg, #2E7D32 0%, #388E3C 100%);
   color: white;
-  padding: 16px 24px;
+  padding: clamp(4px, 2vw, 16px) clamp(6px, 3vw, 24px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -146,7 +146,7 @@ function handleToggleSound() {
 }
 
 .game-title {
-  font-size: 28px;
+  font-size: clamp(12px, 5vw, 28px);
   font-weight: bold;
   margin: 0;
   white-space: nowrap;
@@ -154,9 +154,9 @@ function handleToggleSound() {
 
 .version-badge {
   background: rgba(255, 255, 255, 0.2);
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
+  padding: clamp(2px, 0.5vw, 4px) clamp(6px, 2vw, 12px);
+  border-radius: clamp(8px, 2vw, 12px);
+  font-size: clamp(7px, 2vw, 12px);
   font-weight: 600;
   letter-spacing: 0.5px;
 }
@@ -204,11 +204,11 @@ function handleToggleSound() {
 }
 
 .btn {
-  padding: 12px 24px;
-  font-size: 16px;
+  padding: clamp(5px, 1.5vw, 12px) clamp(8px, 3vw, 24px);
+  font-size: clamp(10px, 2.5vw, 16px);
   font-weight: 600;
   border: none;
-  border-radius: 24px;
+  border-radius: clamp(8px, 3vw, 24px);
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
@@ -321,6 +321,81 @@ function handleToggleSound() {
   .btn {
     padding: 8px 16px;
     font-size: 13px;
+  }
+}
+
+/* Pantallas muy pequeñas (hasta 360px) */
+@media (max-width: 360px) {
+  .header-content {
+    gap: clamp(4px, 2vw, 12px);
+  }
+
+  .game-title {
+    white-space: normal;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .header-info {
+    gap: clamp(4px, 1.5vw, 8px);
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .score-display,
+  .game-status {
+    flex: 1;
+    min-width: fit-content;
+    text-align: center;
+  }
+
+  .header-actions {
+    width: 100%;
+    gap: clamp(3px, 1vw, 6px);
+  }
+
+  .btn-sound {
+    flex: 0 0 auto;
+    padding: clamp(5px, 1.5vw, 8px);
+    font-size: clamp(14px, 4vw, 18px);
+  }
+
+  .btn-auto,
+  .btn-new {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* Pantallas ultra pequeñas (hasta 280px) */
+@media (max-width: 280px) {
+  .title-section {
+    flex-direction: column;
+    gap: 3px;
+    align-items: center;
+  }
+
+  .header-info {
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .score-display,
+  .game-status {
+    width: 100%;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .btn-sound {
+    font-size: 16px;
   }
 }
 
