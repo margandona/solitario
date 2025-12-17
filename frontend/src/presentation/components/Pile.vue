@@ -15,20 +15,24 @@
         {{ getSuitSymbol(pile.foundationSuit) }}
       </span>
       <span v-else-if="pile.type === 'TABLEAU'" class="placeholder-text">K</span>
+      <span v-else-if="pile.type === 'STOCK'" class="placeholder-text stock-reload">
+        🔄
+      </span>
       <span v-else class="placeholder-text">Vacío</span>
     </div>
 
     <!-- Cartas en la pila -->
     <div 
-      v-for="(card, index) in displayCards" 
+      v-for="(card, displayIndex) in displayCards" 
       :key="card.id"
-      :style="getCardStyle(index)"
+      :style="getCardStyle(getActualIndex(displayIndex))"
       class="card-wrapper"
-      :draggable="canDragCard(card, index)"
-      @dragstart="handleDragStart(card, index, $event)"
-      @click.stop="handleCardClick(card, index)"
-      @touchstart="handleTouchStart(card, index, $event)"
-      @touchmove.prevent="handleTouchMove($event)"
+      :class="{ 'stock-card': pile.type === 'STOCK' || pile.type === 'WASTE' }"
+      :draggable="canDragCard(card, getActualIndex(displayIndex))"
+      @dragstart="handleDragStart(card, getActualIndex(displayIndex), $event)"
+      @click.stop="handleCardClick(card, getActualIndex(displayIndex))"
+      @touchstart="handleTouchStart(card, getActualIndex(displayIndex), $event)"
+      @touchmove="handleTouchMove($event)"
       @touchend="handleTouchEnd($event)"
       @touchcancel="handleTouchCancel"
     >
@@ -87,6 +91,15 @@ const pileClasses = computed(() => ({
   'pile-empty': props.pile.cards.length === 0,
   'drag-over': isDragOver.value
 }));
+
+function getActualIndex(displayIndex: number): number {
+  // Para STOCK y WASTE, el índice real es el último de la pila
+  if (props.pile.type === 'STOCK' || props.pile.type === 'WASTE') {
+    return props.pile.cards.length - 1;
+  }
+  // Para otras pilas, el índice es directo
+  return displayIndex;
+}
 
 function getCardStyle(index: number) {
   // Para tableau, apilar cartas con offset vertical
@@ -244,10 +257,22 @@ function getSuitSymbol(suit?: string): string {
 
 // Touch event handlers
 function handleTouchStart(card: CardType, index: number, event: TouchEvent) {
-  if (!canDragCard(card, index)) return;
-  
   touchStartTime.value = Date.now();
   const touch = event.touches[0];
+  
+  // Para STOCK, registrar posición inicial pero no iniciar drag (solo permite click)
+  if (props.pile.type === 'STOCK') {
+    dragData.value = {
+      pileId: props.pile.id,
+      cardIndex: index,
+      cardCount: 0,
+      cards: []
+    };
+    return;
+  }
+  
+  // Para WASTE y otras pilas, verificar si se puede arrastrar
+  if (!canDragCard(card, index)) return;
   
   // Calcular cuántas cartas se van a mover
   const cardCount = props.pile.cards.length - index;
@@ -274,6 +299,10 @@ function handleTouchStart(card: CardType, index: number, event: TouchEvent) {
 }
 
 function handleTouchMove(event: TouchEvent) {
+  // Si es STOCK, no hacer nada (solo permitir tap/click)
+  if (props.pile.type === 'STOCK') return;
+  
+  // Si no hay drag activo, no hacer nada
   if (!isTouchDragging.value || !touchDragManager.isDragging()) return;
   
   const touch = event.touches[0];
@@ -290,9 +319,29 @@ function handleTouchMove(event: TouchEvent) {
 }
 
 function handleTouchEnd(event: TouchEvent) {
-  if (!isTouchDragging.value) return;
-  
+  const touchDuration = Date.now() - touchStartTime.value;
   const touch = event.changedTouches[0];
+  
+  // Para STOCK: si es un tap rápido sin movimiento, tratarlo como click
+  if (props.pile.type === 'STOCK' && touchDuration < 300 && !isTouchDragging.value) {
+    const card = displayCards.value[displayCards.value.length - 1];
+    if (card) {
+      handleCardClick(card, displayCards.value.length - 1);
+    } else {
+      handlePileClick();
+    }
+    dragData.value = null;
+    touchStartTime.value = 0;
+    return;
+  }
+  
+  // Para otras pilas con drag activo
+  if (!isTouchDragging.value) {
+    dragData.value = null;
+    touchStartTime.value = 0;
+    return;
+  }
+  
   const targetPileId = touchDragManager.findDropTarget(touch.clientX, touch.clientY);
   const dragInfo = touchDragManager.endDrag();
   
@@ -309,6 +358,7 @@ function handleTouchEnd(event: TouchEvent) {
   }
   
   dragData.value = null;
+  touchStartTime.value = 0;
 }
 
 function handleTouchCancel() {
@@ -397,14 +447,59 @@ onUnmounted(() => {
   color: #999;
 }
 
+.placeholder-text.stock-reload {
+  font-size: 56px;
+  color: #4caf50;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.placeholder-text.stock-reload:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.placeholder-text.stock-reload:active {
+  transform: scale(0.95);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 .card-wrapper {
   position: relative;
   touch-action: none;
   -webkit-tap-highlight-color: transparent;
 }
 
+.card-wrapper.stock-card {
+  touch-action: manipulation;
+}
+
+.pile-stock .card-wrapper.stock-card {
+  cursor: pointer;
+}
+
+.pile-waste .card-wrapper {
+  cursor: grab;
+  touch-action: none;
+}
+
 .card-wrapper:active {
   cursor: grabbing;
+}
+
+.pile-stock .card-wrapper.stock-card:active {
+  cursor: pointer;
+  opacity: 0.8;
 }
 
 /* Tablets */

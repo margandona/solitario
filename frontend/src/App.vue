@@ -111,13 +111,23 @@ async function handleDrawFromStock() {
 }
 
 async function handleMoveCards(data: { fromPileId: string; toPileId: string; cardCount: number }) {
-  // Sonido diferente si es a foundation o tableau
-  if (data.toPileId.includes('foundation')) {
-    soundManager.play('card-place');
-  } else {
-    soundManager.play('card-move');
+  try {
+    console.log('Moviendo cartas:', data);
+    
+    // Sonido diferente si es a foundation o tableau
+    if (data.toPileId.includes('foundation')) {
+      soundManager.play('card-place');
+    } else {
+      soundManager.play('card-move');
+    }
+    
+    await moveCards(data.fromPileId, data.toPileId, data.cardCount);
+  } catch (error: any) {
+    console.error('Error al mover cartas:', error);
+    soundManager.play('error');
+    // Mostrar mensaje al usuario si es necesario
+    alert(error.message || 'No se puede mover la carta a esa posición');
   }
-  await moveCards(data.fromPileId, data.toPileId, data.cardCount);
 }
 
 async function handleAutoComplete() {
