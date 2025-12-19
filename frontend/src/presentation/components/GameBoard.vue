@@ -171,6 +171,34 @@ function handleCardDrop(data: { fromPileId: string; toPileId: string; cardCount:
 /* Móviles */
 @media (max-width: 480px) {
   .game-board {
+    padding: 6px;
+    gap: 14px;
+  }
+
+  .top-area {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .left-section,
+  .foundations {
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .tableau-area {
+    gap: 5px;
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding-bottom: 8px;
+  }
+}
+
+/* Portrait Mode - Optimizado para visibilidad de Wely */
+@media (orientation: portrait) and (min-width: 361px) and (max-width: 480px) {
+  .game-board {
     padding: 8px;
     gap: 16px;
   }
@@ -181,18 +209,22 @@ function handleCardDrop(data: { fromPileId: string; toPileId: string; cardCount:
     gap: 12px;
   }
 
-  .left-section,
+  .left-section {
+    gap: 10px;
+    justify-content: center;
+  }
+  
   .foundations {
     gap: 8px;
     justify-content: center;
-    flex-wrap: wrap;
   }
 
   .tableau-area {
     gap: 6px;
     overflow-x: auto;
     justify-content: flex-start;
-    padding-bottom: 8px;
+    padding-bottom: 10px;
+    -webkit-overflow-scrolling: touch;
   }
 }
 

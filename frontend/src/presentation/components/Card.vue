@@ -85,11 +85,11 @@ function handleClick() {
   touch-action: none;
 }
 
-/* Fluidez entre breakpoints */
-@media (max-width: 600px) {
+/* Fluidez entre breakpoints - Mejorado */
+@media (max-width: 600px) and (min-width: 481px) {
   .card {
-    width: calc(50px + 3vw);
-    height: calc(70px + 4.2vw);
+    width: calc(55px + 3vw);
+    height: calc(77px + 4.2vw);
   }
 }
 
@@ -140,7 +140,7 @@ function handleClick() {
 
 .corner-rank {
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 900;
   line-height: 1;
 }
 
@@ -148,6 +148,7 @@ function handleClick() {
   font-size: 16px;
   line-height: 1;
   margin-top: 1px;
+  font-weight: bold;
 }
 
 /* Símbolo central */
@@ -158,15 +159,16 @@ function handleClick() {
   transform: translate(-50%, -50%);
   font-size: 42px;
   line-height: 1;
-  opacity: 0.9;
+  opacity: 0.95;
+  font-weight: bold;
 }
 
 .color-red {
-  color: #d32f2f;
+  color: #c62828;
 }
 
 .color-black {
-  color: #212121;
+  color: #000000;
 }
 
 /* Carta boca abajo */
@@ -220,23 +222,24 @@ function handleClick() {
   }
 }
 
-/* Mobile */
+/* Mobile - Mejorado para mejor visibilidad */
 @media (max-width: 480px) {
   .card {
-    width: 50px;
-    height: 70px;
+    width: 58px;
+    height: 81px;
   }
 
   .corner-rank {
-    font-size: 12px;
+    font-size: 14px;
+    font-weight: 900;
   }
 
   .corner-suit {
-    font-size: 11px;
+    font-size: 13px;
   }
 
   .card-center {
-    font-size: 26px;
+    font-size: 32px;
   }
 
   .card-corner.top-left {
@@ -247,6 +250,45 @@ function handleClick() {
   .card-corner.bottom-right {
     bottom: 2px;
     right: 4px;
+  }
+  
+  .card-content {
+    border-width: 3px;
+  }
+}
+
+/* Portrait mode - Optimizado para abuelita Wely */
+@media (orientation: portrait) and (min-width: 361px) and (max-width: 480px) {
+  .card {
+    width: 75px;
+    height: 105px;
+  }
+
+  .corner-rank {
+    font-size: 18px;
+    font-weight: 900;
+  }
+
+  .corner-suit {
+    font-size: 20px;
+  }
+
+  .card-center {
+    font-size: 44px;
+  }
+  
+  .card-content {
+    border-width: 3px;
+  }
+  
+  .color-red {
+    color: #d32f2f;
+    text-shadow: 0 0 2px rgba(211, 47, 47, 0.3);
+  }
+  
+  .color-black {
+    color: #000000;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
   }
 }
 
