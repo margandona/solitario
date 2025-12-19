@@ -1,6 +1,6 @@
 /**
  * Sistema de Versionado de la Aplicación
- * Formato: MAJOR.MINOR.PATCH
+ * Formato: MAJOR.MINOR.PATCH (SemVer)
  * 
  * MAJOR: Cambios incompatibles de API
  * MINOR: Nuevas características compatibles
@@ -8,12 +8,12 @@
  */
 
 export const APP_VERSION = {
-  major: 1,
-  minor: 1,
+  major: 2,
+  minor: 0,
   patch: 0,
-  full: '1.1.0',
-  buildDate: new Date('2025-12-16'),
-  name: 'Sonidos y Mejoras'
+  full: '2.0.0',
+  buildDate: new Date('2025-12-18'),
+  name: 'Optimizado para Wely'
 };
 
 export function getVersionString(): string {

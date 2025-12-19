@@ -94,13 +94,25 @@ function handleCardDrop(data: { fromPileId: string; toPileId: string; cardCount:
   const fromIndex = fromPile.cards.length - data.cardCount;
   const cardsToMove = fromPile.cards.slice(fromIndex);
   
+  // Log detallado para debugging
+  console.log('🔍 Validando movimiento:', {
+    from: fromPile.type,
+    to: toPile.type,
+    cardCount: data.cardCount,
+    cards: cardsToMove.map(c => `${c.rank}${c.suit[0]}`),
+    toPileTop: toPile.cards.length > 0 ? `${toPile.cards[toPile.cards.length - 1].rank}${toPile.cards[toPile.cards.length - 1].suit[0]}` : 'VACÍA'
+  });
+  
   // Validar el movimiento
   if (!canMoveCardsToPile(cardsToMove, toPile)) {
     // Reproducir sonido de error y no permitir el movimiento
     soundManager.play('error');
-    console.log('Movimiento inválido: no se puede colocar esa carta aquí');
+    console.error('❌ Movimiento rechazado por validación frontend');
+    alert(`No se puede mover ${cardsToMove[0].rank}${cardsToMove[0].suit[0]} a ${toPile.type}`);
     return;
   }
+  
+  console.log('✅ Movimiento válido según frontend, enviando al backend...');
   
   // Si es válido, emitir el evento
   emit('moveCards', data);

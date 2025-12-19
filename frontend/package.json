@@ -1,13 +1,16 @@
 {
   "name": "solitario-frontend",
-  "version": "1.0.0",
-  "description": "Frontend PWA para el juego de Solitario Klondike para la abuelita",
+  "version": "2.0.0",
+  "description": "Frontend PWA para el juego de Solitario Klondike para la abuelita Wely",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
-    "type-check": "vue-tsc --noEmit"
+    "type-check": "vue-tsc --noEmit",
+    "version:patch": "npm version patch --no-git-tag-version",
+    "version:minor": "npm version minor --no-git-tag-version",
+    "version:major": "npm version major --no-git-tag-version"
   },
   "dependencies": {
     "vue": "^3.3.11",

@@ -31,13 +31,17 @@ const app = express();
 app.use(cors({ origin: true })); // En Functions, usar cors con origin: true
 app.use(express.json());
 
+// Importar versión
+import { getFullVersionInfo } from './version';
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
     service: 'Solitario API - Firebase Functions',
-    firebase: '✅ Connected'
+    firebase: '✅ Connected',
+    ...getFullVersionInfo()
   });
 });
 

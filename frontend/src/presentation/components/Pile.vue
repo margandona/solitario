@@ -242,16 +242,7 @@ function handleDrop(event: DragEvent) {
       return;
     }
     
-    // Validar el movimiento ANTES de emitir
-    if (dragData.value && dragData.value.cards && dragData.value.cards.length > 0) {
-      const cardsToMove = dragData.value.cards;
-      if (!canMoveCardsToPile(cardsToMove, props.pile)) {
-        console.log('Movimiento inválido: no se puede colocar esa carta aquí');
-        return;
-      }
-    }
-    
-    // Emitir solo si el movimiento es válido
+    // Emitir el evento - la validación se hace en GameBoard.vue
     emit('cardDrop', {
       fromPileId: data.pileId,
       toPileId: props.pile.id,
