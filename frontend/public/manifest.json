@@ -2,6 +2,7 @@
   "name": "Solitario para la Abuelita",
   "short_name": "Solitario",
   "description": "Juego de Solitario Klondike hecho con amor para mi abuelita. Disfruta de un juego relajante y accesible.",
+  "version": "1.0.0",
   "theme_color": "#2E7D32",
   "background_color": "#e8f5e9",
   "display": "standalone",

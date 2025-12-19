@@ -6,8 +6,11 @@ export default defineConfig({
   plugins: [
     vue(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       includeAssets: ['favicon.svg', 'icon-512x512.svg'],
+      devOptions: {
+        enabled: false
+      },
       manifest: {
         name: 'Solitario Klondike',
         short_name: 'Solitario',

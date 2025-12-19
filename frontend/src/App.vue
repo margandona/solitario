@@ -1,5 +1,7 @@
 <template>
   <div id="app">
+    <UpdatePrompt />
+    
     <HeaderBar 
       v-if="gameState"
       :score="currentScore"
@@ -57,6 +59,7 @@ import HeaderBar from './presentation/components/HeaderBar.vue';
 import GameBoard from './presentation/components/GameBoard.vue';
 import NiceMessageModal from './presentation/components/NiceMessageModal.vue';
 import InstallPrompt from './presentation/components/InstallPrompt.vue';
+import UpdatePrompt from './presentation/components/UpdatePrompt.vue';
 import { useGameState } from './application/useGameState';
 import { getRandomNiceMessage, type MessageType } from './utils/niceMessages';
 import { soundManager } from './utils/sounds';
