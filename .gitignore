@@ -42,6 +42,8 @@ ui-debug.log
 **/service-account-*.json
 **/firebase-credentials.json
 serviceAccountKey.json
+**/*firebase-adminsdk*.json
+**/culinary-*.json
 
 # Testing
 coverage/
