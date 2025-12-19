@@ -85,11 +85,19 @@ export function canPlaceCardOnPile(cardToPlace: Card, targetPile: Pile): boolean
       return topCard.faceUp && canStackOnTableau(cardToPlace, topCard);
 
     case 'FOUNDATION':
-      // Verificar que sea el palo correcto si está definido
-      if (targetPile.foundationSuit && topCard && cardToPlace.suit !== targetPile.foundationSuit) {
-        return false;
-      }
-      return canPlaceOnFoundation(cardToPlace, topCard, targetPile.foundationSuit);
+      // Debug logging
+      console.log('🔎 Foundation validation:', {
+        cardToPlace: `${cardToPlace.rank}${cardToPlace.suit}`,
+        topCard: topCard ? `${topCard.rank}${topCard.suit}` : null,
+        foundationSuit: targetPile.foundationSuit,
+        pileId: targetPile.id
+      });
+      
+      // La foundation solo valida contra la carta superior, no contra foundationSuit
+      // porque el backend no siempre setea foundationSuit correctamente
+      const result = canPlaceOnFoundation(cardToPlace, topCard, targetPile.foundationSuit);
+      console.log('🔎 Foundation result:', result);
+      return result;
 
     case 'WASTE':
     case 'STOCK':
@@ -106,21 +114,43 @@ export function canPlaceCardOnPile(cardToPlace: Card, targetPile: Pile): boolean
  * (todas deben estar boca arriba y seguir la regla de apilamiento)
  */
 export function isValidCardSequence(cards: Card[]): boolean {
-  if (cards.length === 0) return false;
+  if (cards.length === 0) {
+    console.log('🚫 Sequence validation: No cards');
+    return false;
+  }
+  
+  // Debug: verificar faceUp
+  const faceUpStatus = cards.map(c => ({
+    card: `${c.rank}${c.suit}`,
+    faceUp: c.faceUp
+  }));
+  console.log('🔎 Cards faceUp status:', faceUpStatus);
   
   // Todas deben estar boca arriba
-  if (!cards.every(card => card.faceUp)) return false;
+  const allFaceUp = cards.every(card => card.faceUp);
+  if (!allFaceUp) {
+    console.log('🚫 Sequence validation: Not all cards are face up');
+    return false;
+  }
   
   // Si solo es una carta, es válida
-  if (cards.length === 1) return true;
+  if (cards.length === 1) {
+    console.log('✅ Single card, valid sequence');
+    return true;
+  }
   
   // Verificar que cada carta pueda apilarse sobre la anterior
   for (let i = 1; i < cards.length; i++) {
     if (!canStackOnTableau(cards[i], cards[i - 1])) {
+      console.log('🚫 Sequence validation: Invalid stacking', {
+        card: `${cards[i].rank}${cards[i].suit}`,
+        below: `${cards[i-1].rank}${cards[i-1].suit}`
+      });
       return false;
     }
   }
   
+  console.log('✅ Valid sequence');
   return true;
 }
 

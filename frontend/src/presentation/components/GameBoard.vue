@@ -95,12 +95,24 @@ function handleCardDrop(data: { fromPileId: string; toPileId: string; cardCount:
   const cardsToMove = fromPile.cards.slice(fromIndex);
   
   // Log detallado para debugging
+  const cardToMove = cardsToMove[0];
+  const topCard = toPile.cards.length > 0 ? toPile.cards[toPile.cards.length - 1] : null;
+  
   console.log('🔍 Validando movimiento:', {
     from: fromPile.type,
     to: toPile.type,
     cardCount: data.cardCount,
-    cards: cardsToMove.map(c => `${c.rank}${c.suit[0]}`),
-    toPileTop: toPile.cards.length > 0 ? `${toPile.cards[toPile.cards.length - 1].rank}${toPile.cards[toPile.cards.length - 1].suit[0]}` : 'VACÍA'
+    cardToMove: {
+      rank: cardToMove.rank,
+      suit: cardToMove.suit,
+      full: `${cardToMove.rank}${cardToMove.suit[0]}`
+    },
+    toPileTop: topCard ? {
+      rank: topCard.rank,
+      suit: topCard.suit,
+      full: `${topCard.rank}${topCard.suit[0]}`
+    } : 'VACÍA',
+    foundationSuit: toPile.foundationSuit
   });
   
   // Validar el movimiento
@@ -108,7 +120,18 @@ function handleCardDrop(data: { fromPileId: string; toPileId: string; cardCount:
     // Reproducir sonido de error y no permitir el movimiento
     soundManager.play('error');
     console.error('❌ Movimiento rechazado por validación frontend');
-    alert(`No se puede mover ${cardsToMove[0].rank}${cardsToMove[0].suit[0]} a ${toPile.type}`);
+    
+    // Mostrar detalles del rechazo
+    const details = `
+Carta: ${cardsToMove[0].rank}${cardsToMove[0].suit}
+FaceUp: ${cardsToMove[0].faceUp}
+Destino: ${toPile.type}
+Top: ${topCard ? topCard.rank + topCard.suit : 'vacía'}
+FoundationSuit: ${toPile.foundationSuit || 'undefined'}
+    `.trim();
+    
+    console.error('Detalles del rechazo:', details);
+    alert(`❌ No válido\n${details}`);
     return;
   }
   
