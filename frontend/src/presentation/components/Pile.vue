@@ -232,8 +232,16 @@ function handleDrop(event: DragEvent) {
       return;
     }
     
-    // Emitir el evento solo si pasó la validación visual
-    // La validación real se hará en el componente padre con todas las pilas
+    // Validar el movimiento ANTES de emitir
+    if (dragData.value && dragData.value.cards && dragData.value.cards.length > 0) {
+      const cardsToMove = dragData.value.cards;
+      if (!canMoveCardsToPile(cardsToMove, props.pile)) {
+        console.log('Movimiento inválido: no se puede colocar esa carta aquí');
+        return;
+      }
+    }
+    
+    // Emitir solo si el movimiento es válido
     emit('cardDrop', {
       fromPileId: data.pileId,
       toPileId: props.pile.id,

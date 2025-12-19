@@ -40,55 +40,27 @@ export function useGameState() {
   }
 
   /**
-   * Roba cartas del stock con actualización optimista
+   * Roba cartas del stock esperando respuesta del servidor
    */
   async function drawFromStock(count: number = 1): Promise<void> {
     if (!gameState.value) return;
 
-    const previousState = JSON.parse(JSON.stringify(gameState.value));
-
     try {
-      // Actualización optimista local
-      if (gameState.value.stock.cards.length > 0) {
-        // Mover cartas de stock a waste
-        const cardsToMove = gameState.value.stock.cards.splice(-count, count);
-        cardsToMove.forEach(card => {
-          card.faceUp = true;
-        });
-        gameState.value.waste.cards.push(...cardsToMove);
-      } else if (gameState.value.waste.cards.length > 0) {
-        // Reciclar: mover todas de waste a stock
-        const wasteCards = gameState.value.waste.cards.splice(0);
-        wasteCards.reverse().forEach(card => {
-          card.faceUp = false;
-        });
-        gameState.value.stock.cards.push(...wasteCards);
-      }
-    } catch (localError) {
-      console.error('Error en actualización optimista de draw:', localError);
-      return;
-    }
-
-    // Sincronizar con servidor
-    try {
-      const serverState = await apiClient.drawFromStock(previousState.id, count);
+      // Esperar la respuesta del servidor ANTES de actualizar localmente
+      const serverState = await apiClient.drawFromStock(gameState.value.id, count);
       
-      // Solo actualizar campos que pueden diferir
-      if (gameState.value) {
-        gameState.value.status = serverState.status;
-        gameState.value.score = serverState.score;
-        gameState.value.moves = serverState.moves;
-      }
+      // Actualizar con el estado del servidor (autoridad)
+      gameState.value = serverState;
     } catch (e) {
-      // Revertir si falla
-      gameState.value = previousState;
+      // Si falla, no hacer nada (el estado permanece igual)
       error.value = (e as Error).message;
-      console.error('Error al robar cartas, revirtiendo:', e);
+      console.error('Error al robar cartas:', e);
     }
   }
 
   /**
-   * Mueve carta(s) de una pila a otra con actualización optimista
+   * Mueve carta(s) de una pila a otra SIN actualización optimista
+   * Espera la respuesta del servidor antes de actualizar el estado
    */
   async function moveCards(
     fromPileId: string,
@@ -97,66 +69,24 @@ export function useGameState() {
   ): Promise<boolean> {
     if (!gameState.value) return false;
 
-    // Guardamos el estado anterior por si necesitamos revertir
-    const previousState = JSON.parse(JSON.stringify(gameState.value));
-    
-    // Actualización optimista local (sin esperar al servidor)
     try {
-      // Encontrar las pilas
-      const fromPile = findPileById(fromPileId);
-      const toPile = findPileById(toPileId);
-      
-      if (!fromPile || !toPile) {
-        throw new Error('Pila no encontrada');
-      }
-
-      // Mover las cartas localmente
-      const cardsToMove = fromPile.cards.splice(-cardCount, cardCount);
-      toPile.cards.push(...cardsToMove);
-      
-      // Si la pila de origen es tableau y quedó con cartas, voltear la superior
-      if (fromPile.type === 'TABLEAU' && fromPile.cards.length > 0) {
-        fromPile.cards[fromPile.cards.length - 1].faceUp = true;
-      }
-      
-      // Actualizar score localmente si es movimiento a foundation
-      if (toPile.type === 'FOUNDATION' && gameState.value) {
-        gameState.value.score += 10;
-      }
-    } catch (localError) {
-      // Si falla la actualización local, no continuar
-      console.error('Error en actualización optimista:', localError);
-      return false;
-    }
-
-    // Ahora sincronizar con el servidor en background
-    try {
+      // Esperar la respuesta del servidor ANTES de actualizar localmente
       const serverState = await apiClient.moveCards(
-        previousState.id,
+        gameState.value.id,
         fromPileId,
         toPileId,
         cardCount
       );
       
-      // Actualizar solo campos que el servidor puede cambiar
-      if (gameState.value) {
-        gameState.value.status = serverState.status;
-        gameState.value.score = serverState.score;
-        gameState.value.moves = serverState.moves;
-        
-        // Solo si el servidor indica victoria o derrota, reemplazar todo
-        if (serverState.status !== 'PLAYING') {
-          gameState.value = serverState;
-        }
-      }
+      // Actualizar con el estado del servidor (autoridad)
+      gameState.value = serverState;
       
       return true;
     } catch (e) {
-      // Si falla el servidor, revertir al estado anterior
-      gameState.value = previousState;
+      // Si falla, no hacer nada (el estado permanece igual)
       error.value = (e as Error).message;
-      console.error('Error al mover cartas, revirtiendo:', e);
-      return false;
+      console.error('Error al mover cartas:', e);
+      throw e; // Re-lanzar para que App.vue lo maneje
     }
   }
 
