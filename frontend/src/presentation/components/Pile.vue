@@ -102,6 +102,16 @@ function getActualIndex(displayIndex: number): number {
 }
 
 function getCardStyle(index: number) {
+  // Para FOUNDATION, superponer cartas (overlap) - solo muestra la última
+  if (props.pile.type === 'FOUNDATION' && index > 0) {
+    return {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      zIndex: index
+    };
+  }
+  
   // Para tableau, apilar cartas con offset vertical
   if (props.pile.type === 'TABLEAU' && index > 0) {
     // Calcular offset responsivo basado en el ancho de ventana
@@ -412,7 +422,14 @@ onUnmounted(() => {
   }
 }
 
-.pile-foundation,
+.pile-foundation {
+  position: relative;
+  min-height: 112px;
+  max-height: 112px;
+  min-width: 80px;
+  overflow: hidden;
+}
+
 .pile-waste,
 .pile-stock {
   min-height: 112px;
@@ -543,33 +560,8 @@ onUnmounted(() => {
   }
 }
 
-/* Pantallas pequeñas (320px) */
-@media (max-width: 320px) {
-  .pile {
-    min-width: 36px;
-    min-height: 50px;
-    border-width: 1px;
-    border-radius: 3px;
-  }
-
-  .pile-foundation,
-  .pile-waste,
-  .pile-stock {
-    min-height: 50px;
-    min-width: 36px;
-  }
-
-  .pile-tableau {
-    min-height: 240px;
-  }
-
-  .placeholder-text {
-    font-size: 20px;
-  }
-}
-
-/* Dispositivos muy pequeños (250px) */
-@media (max-width: 250px) {
+/* Galaxy Fold 4 y pantallas ultra-angostas (< 300px) */
+@media (max-width: 300px) {
   .pile {
     min-width: 32px;
     min-height: 45px;
@@ -577,7 +569,12 @@ onUnmounted(() => {
     border-radius: 2px;
   }
 
-  .pile-foundation,
+  .pile-foundation {
+    min-height: 45px;
+    max-height: 45px;
+    min-width: 32px;
+  }
+  
   .pile-waste,
   .pile-stock {
     min-height: 45px;
@@ -585,12 +582,46 @@ onUnmounted(() => {
   }
 
   .pile-tableau {
-    min-height: 200px;
+    min-height: 180px;
   }
 
   .placeholder-text {
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1;
+  }
+  
+  .placeholder-text.stock-reload {
+    font-size: 18px;
+  }
+}
+
+/* Pantallas pequeñas (301-360px) */
+@media (max-width: 360px) and (min-width: 301px) {
+  .pile {
+    min-width: 36px;
+    min-height: 50px;
+    border-width: 1px;
+    border-radius: 3px;
+  }
+
+  .pile-foundation {
+    min-height: 50px;
+    max-height: 50px;
+    min-width: 36px;
+  }
+  
+  .pile-waste,
+  .pile-stock {
+    min-height: 50px;
+    min-width: 36px;
+  }
+
+  .pile-tableau {
+    min-height: 220px;
+  }
+
+  .placeholder-text {
+    font-size: 18px;
   }
 }
 </style>

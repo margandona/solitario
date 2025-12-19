@@ -367,35 +367,86 @@ function handleToggleSound() {
   }
 }
 
-/* Pantallas ultra pequeñas (hasta 280px) */
-@media (max-width: 280px) {
+/* Galaxy Fold 4 y pantallas ultra-angostas (< 300px) */
+@media (max-width: 300px) {
+  .header-bar {
+    padding: 6px 8px;
+  }
+  
+  .header-content {
+    gap: 4px;
+  }
+  
   .title-section {
-    flex-direction: column;
-    gap: 3px;
+    flex-direction: row;
+    gap: 4px;
     align-items: center;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .game-title {
+    font-size: 14px;
+    white-space: normal;
+    line-height: 1.1;
+    text-align: center;
+  }
+  
+  .version-badge {
+    font-size: 8px;
+    padding: 1px 4px;
   }
 
   .header-info {
-    flex-direction: column;
+    flex-direction: row;
     gap: 3px;
+    width: 100%;
+    justify-content: space-between;
   }
 
   .score-display,
   .game-status {
-    width: 100%;
+    flex: 1;
+    font-size: 11px;
+    padding: 3px 6px;
+    text-align: center;
+  }
+  
+  .score-display strong {
+    font-size: 13px;
   }
 
   .header-actions {
-    flex-direction: column;
-    gap: 2px;
+    width: 100%;
+    gap: 3px;
   }
 
   .btn {
-    width: 100%;
+    padding: 6px 8px;
+    font-size: 11px;
   }
 
   .btn-sound {
+    flex: 0 0 auto;
+    padding: 6px 10px;
     font-size: 16px;
+  }
+
+  .btn-auto,
+  .btn-new {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  /* Usar iconos en lugar de texto largo */
+  .btn-auto::before {
+    content: '✨';
+    margin-right: 2px;
+  }
+  
+  .btn-new::before {
+    content: '🔄';
+    margin-right: 2px;
   }
 }
 
