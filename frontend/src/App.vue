@@ -52,14 +52,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import HeaderBar from './presentation/components/HeaderBar.vue';
 import GameBoard from './presentation/components/GameBoard.vue';
 import NiceMessageModal from './presentation/components/NiceMessageModal.vue';
 import InstallPrompt from './presentation/components/InstallPrompt.vue';
 import { useGameState } from './application/useGameState';
-import { getRandomNiceMessage } from './utils/niceMessages';
+import { getRandomNiceMessage, type MessageType } from './utils/niceMessages';
 import { soundManager } from './utils/sounds';
+import { useFullscreen } from './utils/useFullscreen';
 import type { Card } from './domain/types';
 
 const {
@@ -75,14 +76,96 @@ const {
   autoComplete
 } = useGameState();
 
+const { isFullscreen, toggleFullscreen } = useFullscreen();
+
 const showModal = ref(false);
 const modalType = ref<'start' | 'win' | 'lose' | 'info'>('start');
 const modalMessage = ref('');
+
+// Tracking para combos y paciencia
+const consecutiveFoundationMoves = ref(0);
+const lastMoveTime = ref(Date.now());
+let patienceTimer: number | null = null;
+
+/**
+ * Obtiene el momento del día para mensajes personalizados
+ */
+function getTimeOfDay(): MessageType {
+  const hour = new Date().getHours();
+  if (hour >= 6 && hour < 12) return 'morning';
+  if (hour >= 12 && hour < 18) return 'afternoon';
+  if (hour >= 18 && hour < 24) return 'evening';
+  return 'night';
+}
+
+/**
+ * Inicia el timer de paciencia
+ */
+function startPatienceTimer() {
+  if (patienceTimer) {
+    clearTimeout(patienceTimer);
+  }
+  
+  // Si pasan 90 segundos sin mover, mostrar mensaje de ánimo
+  patienceTimer = window.setTimeout(() => {
+    if (gameState.value?.status === 'PLAYING') {
+      showPatienceMessage();
+    }
+  }, 90000); // 90 segundos
+}
+
+/**
+ * Resetea el timer de paciencia
+ */
+function resetPatienceTimer() {
+  if (patienceTimer) {
+    clearTimeout(patienceTimer);
+    patienceTimer = null;
+  }
+  lastMoveTime.value = Date.now();
+  startPatienceTimer();
+}
+
+/**
+ * Muestra mensaje de paciencia
+ */
+function showPatienceMessage() {
+  modalType.value = 'info';
+  modalMessage.value = getRandomNiceMessage('patience');
+  showModal.value = true;
+  soundManager.play('card-flip');
+}
+
+/**
+ * Muestra mensaje de combo
+ */
+function showComboMessage() {
+  modalType.value = 'info';
+  modalMessage.value = getRandomNiceMessage('combo');
+  showModal.value = true;
+  soundManager.play('win');
+}
+
+/**
+ * Muestra mensaje de foundation
+ */
+function showFoundationMessage() {
+  modalType.value = 'info';
+  modalMessage.value = getRandomNiceMessage('foundation');
+  showModal.value = true;
+}
 
 // Iniciar juego al montar
 onMounted(() => {
   // Opcional: auto-iniciar o esperar a que el usuario haga clic
   // handleNewGame();
+  startPatienceTimer();
+});
+
+onUnmounted(() => {
+  if (patienceTimer) {
+    clearTimeout(patienceTimer);
+  }
 });
 
 // Vigilar cambios en el estado del juego
@@ -101,12 +184,15 @@ watch(hasLost, (lost) => {
 async function handleNewGame() {
   await startNewGame();
   if (gameState.value) {
+    consecutiveFoundationMoves.value = 0;
+    resetPatienceTimer();
     showStartMessage();
   }
 }
 
 async function handleDrawFromStock() {
   soundManager.play('card-flip');
+  resetPatienceTimer();
   await drawFromStock(1);
 }
 
@@ -114,17 +200,39 @@ async function handleMoveCards(data: { fromPileId: string; toPileId: string; car
   try {
     console.log('Moviendo cartas:', data);
     
+    // Resetear timer de paciencia
+    resetPatienceTimer();
+    
     // Sonido diferente si es a foundation o tableau
     if (data.toPileId.includes('foundation')) {
       soundManager.play('card-place');
+      
+      // Tracking de movimientos consecutivos a foundation
+      consecutiveFoundationMoves.value++;
+      
+      // Mostrar mensaje de foundation ocasionalmente (20% chance)
+      if (Math.random() < 0.2) {
+        setTimeout(() => showFoundationMessage(), 300);
+      }
+      
+      // Si hace 4+ movimientos seguidos a foundation, es un combo!
+      if (consecutiveFoundationMoves.value >= 4) {
+        setTimeout(() => {
+          showComboMessage();
+          consecutiveFoundationMoves.value = 0;
+        }, 500);
+      }
     } else {
       soundManager.play('card-move');
+      // Movimiento a tableau resetea el combo
+      consecutiveFoundationMoves.value = 0;
     }
     
     await moveCards(data.fromPileId, data.toPileId, data.cardCount);
   } catch (error: any) {
     console.error('Error al mover cartas:', error);
     soundManager.play('error');
+    consecutiveFoundationMoves.value = 0;
     // Mostrar mensaje al usuario si es necesario
     alert(error.message || 'No se puede mover la carta a esa posición');
   }
@@ -145,7 +253,10 @@ function handleCardClick(data: { card: Card; pileId: string }) {
 
 function showStartMessage() {
   modalType.value = 'start';
-  modalMessage.value = getRandomNiceMessage('start');
+  // Usar mensaje según hora del día, con 50% de probabilidad
+  const useTimeMessage = Math.random() < 0.5;
+  const messageType: MessageType = useTimeMessage ? getTimeOfDay() : 'start';
+  modalMessage.value = getRandomNiceMessage(messageType);
   showModal.value = true;
 }
 
